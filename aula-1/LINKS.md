@@ -11,9 +11,14 @@
 
 https://excalidraw.com/#json=nK8g8zbY2mWZQmyuM4U3z,klUvIfqE-taOWAinzPD7Bw
 
-## Installing
+## O que precisa instalar
 
-* https://pt.quarkus.io/get-started/
+* Java 25
+* [Quarkus CLI](https://quarkus.io/get-started)
+* Maven
+* Git 
+* Postman
+* WSL2 para Windows (Boa opção para quem usa Windows)
 
 ## Sugestão de extensões para VSCode
 
@@ -22,3 +27,6 @@ https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
 
 2) Quarkus
 https://marketplace.visualstudio.com/items?itemName=redhat.vscode-quarkus
+
+3) Extensão do Postman para o VSCode
+https://marketplace.visualstudio.com/items?itemName=Postman.postman-for-vscode
