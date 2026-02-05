@@ -14,3 +14,11 @@ https://excalidraw.com/#json=nK8g8zbY2mWZQmyuM4U3z,klUvIfqE-taOWAinzPD7Bw
 ## Installing
 
 * https://pt.quarkus.io/get-started/
+
+## Sugestão de extensões para VSCode
+
+1) Extension Pack for Java
+https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack
+
+2) Quarkus
+https://marketplace.visualstudio.com/items?itemName=redhat.vscode-quarkus
