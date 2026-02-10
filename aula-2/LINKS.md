@@ -11,6 +11,10 @@
 * Quarkus Club Discord: https://discord.gg/4QezQNMT
 * Como instalar o JetBrains para o Windows: https://www.jetbrains.com/idea/download/?section=windows
 
+## Excalidraw
+
+https://excalidraw.com/#json=0Ujput5b978mCBaZZ9IeU,x8QhKZsASsN51SE2MDTWxA
+
 ---
 **NOTE**
 Não vimos na aula 2, vamos ver no início da aula 3.
