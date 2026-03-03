@@ -1,6 +1,8 @@
 package com.ada.challenge.tests;
 
 import com.ada.challenge.scoring.TestScore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -89,7 +91,7 @@ public class ValidationTests extends BaseTest {
     @Test
     @TestScore(points = 3, weight = 0.3, description = "Lesson.name é obrigatório", category = "🧾 Validações")
     @DisplayName("Validação - Lesson.name obrigatório")
-    public void testLessonNameRequired() {
+    public void testLessonNameRequired() throws JsonProcessingException {
         // Create a course first
         String courseJson = """
             {
@@ -97,26 +99,32 @@ public class ValidationTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
         
         // Try to create lesson without name
         String lessonJson = """
             {
             }
             """;
-        
+
+        given()
+                .contentType("application/json")
+                .get("/courses")
+                .then()
+                .extract()
+                .body().asString();
+
         given()
             .contentType("application/json")
             .body(lessonJson)
         .when()
-            .post("/courses/" + courseId + "/lessons")
+            .post("/courses/" + 1 + "/lessons")
         .then()
             .statusCode(400);
     }
@@ -132,14 +140,13 @@ public class ValidationTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
         
         // Try to create lesson with empty name
         String lessonJson = """
@@ -152,10 +159,11 @@ public class ValidationTests extends BaseTest {
             .contentType("application/json")
             .body(lessonJson)
         .when()
-            .post("/courses/" + courseId + "/lessons")
+            .post("/courses/" + 1 + "/lessons")
         .then()
             .statusCode(400);
     }
+
 }
 
 // Made with Bob

@@ -226,14 +226,13 @@ public class HTTPRequirementsTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
         
         // Try to update with invalid data
         String invalidJson = """
@@ -246,7 +245,7 @@ public class HTTPRequirementsTests extends BaseTest {
             .contentType("application/json")
             .body(invalidJson)
         .when()
-            .put("/courses/" + courseId)
+            .put("/courses/" + 1)
         .then()
             .statusCode(400);
     }

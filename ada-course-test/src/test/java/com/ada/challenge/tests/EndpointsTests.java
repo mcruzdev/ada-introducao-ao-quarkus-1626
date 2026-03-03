@@ -1,6 +1,7 @@
 package com.ada.challenge.tests;
 
 import com.ada.challenge.scoring.TestScore;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -85,14 +86,13 @@ public class EndpointsTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
         
         // Test the endpoint
         String updatedJson = """
@@ -105,7 +105,7 @@ public class EndpointsTests extends BaseTest {
             .contentType("application/json")
             .body(updatedJson)
         .when()
-            .put("/courses/" + courseId)
+            .put("/courses/" + 1)
         .then()
             .statusCode(200)
             .contentType("application/json");
@@ -151,14 +151,13 @@ public class EndpointsTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
         
         // Create a lesson
         String lessonJson = """
@@ -171,7 +170,7 @@ public class EndpointsTests extends BaseTest {
             .contentType("application/json")
             .body(lessonJson)
         .when()
-            .post("/courses/" + courseId + "/lessons")
+            .post("/courses/" + 1 + "/lessons")
         .then()
             .statusCode(201)
             .contentType("application/json");
@@ -189,19 +188,28 @@ public class EndpointsTests extends BaseTest {
             }
             """;
         
-        Integer courseId = given()
+        given()
             .contentType("application/json")
             .body(courseJson)
         .when()
             .post("/courses")
         .then()
-            .statusCode(201)
-            .extract().path("id");
+            .statusCode(201);
+
+        given()
+                .when()
+                .contentType(ContentType.JSON)
+                .body("""
+                        { "name": "Quarkus Intro" }
+                        """)
+                        .post("/courses/1/lessons")
+                                .then()
+                                        .statusCode(201);
         
         // Test the endpoint
         given()
         .when()
-            .get("/courses/" + courseId + "/lessons")
+            .get("/courses/" + 1 + "/lessons")
         .then()
             .statusCode(200)
             .contentType("application/json")

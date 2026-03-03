@@ -1,1 +1,0 @@
-INSERT INTO course (id, name) VALUES (3, 'Quarkus');

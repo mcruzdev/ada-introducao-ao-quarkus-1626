@@ -11,7 +11,7 @@ public abstract class BaseTest {
     @BeforeAll
     public static void configureRestAssured() {
         // Get configuration from system properties or use defaults
-        String baseUrl = System.getProperty("test.base.url", "http://localhost:8081");
+        String baseUrl = System.getProperty("test.base.url", "http://localhost:8080");
         String basePath = System.getProperty("test.base.path", "");
         
         RestAssured.baseURI = baseUrl;

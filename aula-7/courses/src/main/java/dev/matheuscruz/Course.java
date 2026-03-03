@@ -1,17 +1,19 @@
 package dev.matheuscruz;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // @Entity
 // PanacheEntity
@@ -24,14 +26,10 @@ public class Course extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name",
-            length = 222,
-            unique = true,
-            nullable = false)
+    @Column(nullable = false)
     private String name;
 
-
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Lesson> lessons;
 
     protected Course() {
@@ -56,5 +54,13 @@ public class Course extends PanacheEntityBase {
 
     public List<Lesson> getLessons() {
         return lessons;
+    }
+
+    public void setName(String name) {
+        String newName = Objects.requireNonNull(name, "name must not be null");
+        if (newName.length() >= 3) {
+            this.name = newName;
+        }
+        // TODO: ...
     }
 }
