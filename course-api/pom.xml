@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-mysql</artifactId> <!-- JDBC -->
+            <artifactId>quarkus-jdbc-h2</artifactId> <!-- JDBC -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
