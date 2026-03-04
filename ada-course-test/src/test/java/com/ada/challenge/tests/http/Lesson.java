@@ -1,4 +1,4 @@
 package com.ada.challenge.tests.http;
 
-public record Lesson() {
+public record Lesson(Long id, String name) {
 }

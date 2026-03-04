@@ -1,4 +1,6 @@
 package com.ada.challenge.tests.http;
 
-public record Course() {
+import java.util.List;
+
+public record Course(Long id, String name, List<Lesson> lessons) {
 }

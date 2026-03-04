@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-jackson</artifactId>
+            <artifactId>quarkus-rest-jackson</artifactId> <!-- REST -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -41,23 +41,19 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId> <!-- ORM -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+            <artifactId>quarkus-jdbc-mysql</artifactId> <!-- JDBC -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-mysql</artifactId>
+            <artifactId>quarkus-hibernate-validator</artifactId> <!-- BEAN VALIDATION -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-health</artifactId>
+            <artifactId>quarkus-smallrye-health</artifactId> <!-- HEALTH CHECK -->
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

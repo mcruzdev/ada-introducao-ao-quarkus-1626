@@ -1,6 +1,11 @@
 package com.ada.challenge.tests;
 
 import com.ada.challenge.scoring.TestScore;
+import com.ada.challenge.tests.http.Course;
+import com.ada.challenge.tests.http.CourseRequest;
+import com.ada.challenge.tests.http.Faker;
+import com.ada.challenge.tests.http.Rest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,72 +25,47 @@ public class PersistenceTests extends BaseTest {
     @DisplayName("Persistência - Dados são salvos e recuperados")
     public void testDataPersistence() {
         // Create a course
-        String courseJson = """
-            {
-                "name": "Persistent Course"
-            }
-            """;
-        
-        Integer courseId = given()
-            .contentType("application/json")
-            .body(courseJson)
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(201)
-            .extract().path("id");
-        
+
+        CourseRequest courseRequest = Rest.createCourse();
+        Course course = Rest.courseByName(courseRequest.name());
+
         // Verify the course can be retrieved (data is persisted)
-        given()
-        .when()
-            .get("/courses/" + courseId)
-        .then()
-            .statusCode(200)
-            .body("id", equalTo(courseId))
-            .body("name", equalTo("Persistent Course"));
-        
-        // Verify it appears in the list
-        given()
-        .when()
-            .get("/courses")
-        .then()
-            .statusCode(200)
-            .body("id", hasItem(courseId));
-        
-        // Update the course
-        String updatedJson = """
-            {
-                "name": "Updated Persistent Course"
-            }
-            """;
-        
+        Assertions.assertNotNull(course.id());
+        Assertions.assertNotNull(course.name());
+        Assertions.assertEquals(courseRequest.name(), course.name());
+
+        String courseName = Faker.courseName();
+        CourseRequest updateCourseRequest = new CourseRequest(courseName);
+
+        // PUT
         given()
             .contentType("application/json")
-            .body(updatedJson)
-        .when()
-            .put("/courses/" + courseId)
-        .then()
-            .statusCode(200);
-        
-        // Verify the update persisted
-        given()
-        .when()
-            .get("/courses/" + courseId)
+            .body(updateCourseRequest)
+            .put("/courses/" + course.id())
         .then()
             .statusCode(200)
-            .body("name", equalTo("Updated Persistent Course"));
-        
-        // Delete the course
+                    .log();
+
+        // GET by ID
         given()
         .when()
-            .delete("/courses/" + courseId)
+            .get("/courses/" + course.id())
+        .then()
+            .statusCode(200)
+            .body("name", equalTo(updateCourseRequest.name()))
+                    .log();
+
+        // DELETE
+        given()
+        .when()
+            .delete("/courses/" + course.id())
         .then()
             .statusCode(204);
         
-        // Verify deletion persisted
+        // GET with 404
         given()
         .when()
-            .get("/courses/" + courseId)
+            .get("/courses/" + course.id())
         .then()
             .statusCode(404);
     }

@@ -1,8 +1,19 @@
 package com.ada.challenge.tests;
 
 import com.ada.challenge.scoring.TestScore;
+import com.ada.challenge.tests.http.Course;
+import com.ada.challenge.tests.http.CourseRequest;
+import com.ada.challenge.tests.http.Faker;
+import com.ada.challenge.tests.http.Lesson;
+import com.ada.challenge.tests.http.LessonRequest;
+import com.ada.challenge.tests.http.Rest;
+import io.restassured.common.mapper.TypeRef;
+import org.instancio.Instancio;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -61,19 +72,26 @@ public class ModelDataTests extends BaseTest {
     @TestScore(points = 4, weight = 0.4, description = "Course deve ter campo 'lessons' (List<Lesson>)", category = "📦 Modelo de Dados")
     @DisplayName("Course - Campo lessons")
     public void testCourseHasLessonsField() {
-        String courseJson = """
-            {
-                "name": "Test Course"
-            }
-            """;
+        CourseRequest courseRequest = Rest.createCourse();
+        Course course = Rest.courseByName(courseRequest.name());
+
+        String lessonName = Faker.lessonName();
+        LessonRequest lessonRequest = new LessonRequest(lessonName);
+
+        given()
+                .contentType("application/json")
+                .body(lessonRequest)
+                .when()
+                .post("/courses/" + course.id() + "/lessons")
+                .then()
+                .statusCode(201);
         
         given()
-            .contentType("application/json")
-            .body(courseJson)
+            .accept("application/json")
         .when()
-            .post("/courses")
+            .get("/courses/" + course.id())
         .then()
-            .statusCode(201)
+            .statusCode(200)
             .body("lessons", notNullValue())
             .body("lessons", instanceOf(java.util.List.class));
     }
@@ -83,75 +101,66 @@ public class ModelDataTests extends BaseTest {
     @DisplayName("Lesson - Campo id")
     public void testLessonHasIdField() {
         // First create a course
-        String courseJson = """
-            {
-                "name": "Test Course"
-            }
-            """;
-        
-        Integer courseId = given()
-            .contentType("application/json")
-            .body(courseJson)
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(201)
-            .extract().path("id");
-        
-        // Then create a lesson
-        String lessonJson = """
-            {
-                "name": "Test Lesson"
-            }
-            """;
-        
+        CourseRequest courseRequest = Rest.createCourse();
+        Course course = Rest.courseByName(courseRequest.name());
+
+        String lessonName = Faker.lessonName();
+        LessonRequest lessonRequest = new LessonRequest(lessonName);
+
         given()
             .contentType("application/json")
-            .body(lessonJson)
+            .body(lessonRequest)
         .when()
-            .post("/courses/" + courseId + "/lessons")
+            .post("/courses/" + course.id() + "/lessons")
         .then()
-            .statusCode(201)
-            .body("id", notNullValue())
-            .body("id", instanceOf(Number.class));
+            .statusCode(201);
+
+        List<Lesson> allCourseLessons = given()
+                .contentType("application/json")
+                .get("/courses/" + course.id() + "/lessons")
+                .then()
+                .extract()
+                .body()
+                .as(new TypeRef<>() {
+                });
+
+        Lesson lessonForChecking = allCourseLessons.stream().filter(l -> l.name().equals(lessonName)).findFirst().orElseThrow();
+
+        Assertions.assertNotNull(lessonForChecking.name());
+        Assertions.assertNotNull(lessonForChecking.id());
     }
 
     @Test
     @TestScore(points = 3, weight = 0.3, description = "Lesson deve ter campo 'name' (String)", category = "📦 Modelo de Dados")
     @DisplayName("Lesson - Campo name")
     public void testLessonHasNameField() {
-        // First create a course
-        String courseJson = """
-            {
-                "name": "Test Course"
-            }
-            """;
-        
-        Integer courseId = given()
-            .contentType("application/json")
-            .body(courseJson)
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(201)
-            .extract().path("id");
-        
-        // Then create a lesson
-        String lessonJson = """
-            {
-                "name": "Test Lesson"
-            }
-            """;
-        
+        CourseRequest courseRequest = Rest.createCourse();
+        Course course = Rest.courseByName(courseRequest.name());
+
+        String lessonName = Faker.lessonName();
+        LessonRequest lessonRequest = new LessonRequest(lessonName);
+
         given()
             .contentType("application/json")
-            .body(lessonJson)
+            .body(lessonRequest)
         .when()
-            .post("/courses/" + courseId + "/lessons")
+            .post("/courses/" + course.id() + "/lessons")
         .then()
-            .statusCode(201)
-            .body("name", equalTo("Test Lesson"))
-            .body("name", instanceOf(String.class));
+            .statusCode(201);
+
+        List<Lesson> allCoursesLesson = given()
+                .contentType("application/json")
+                .get("/courses/" + course.id() + "/lessons")
+                .then()
+                .extract()
+                .body()
+                .as(new TypeRef<>() {
+                });
+
+        Lesson lessonForChecking = allCoursesLesson.stream().filter(l -> l.name().equals(lessonName)).findFirst().orElseThrow();
+
+        Assertions.assertNotNull(lessonForChecking.name());
+        Assertions.assertNotNull(lessonForChecking.id());
     }
 }
 

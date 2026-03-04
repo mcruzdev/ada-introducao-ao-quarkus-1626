@@ -35,15 +35,16 @@ public class Course extends PanacheEntity {
     }
 
     public void addLesson(Lesson lesson) {
-        this.lessons.add(Objects.requireNonNull(lesson, "lesson must no be null"));
+        Lesson validatedLesson = Objects.requireNonNull(lesson, "lesson must no be null");
+        this.lessons.add(validatedLesson);
     }
 
     public void changeName(String name) {
-        Objects.requireNonNull(name, "name must not be null");
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name must not be null");
     }
 
     public List<Lesson> getLessons() {
+        // defensive
         return Collections.unmodifiableList(this.lessons);
     }
 }

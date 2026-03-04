@@ -1,6 +1,11 @@
 package com.ada.challenge.tests;
 
 import com.ada.challenge.scoring.TestScore;
+import com.ada.challenge.tests.http.Course;
+import com.ada.challenge.tests.http.CourseRequest;
+import com.ada.challenge.tests.http.Faker;
+import com.ada.challenge.tests.http.Rest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,36 +44,9 @@ public class OptionalFeaturesTests extends BaseTest {
     @Test
     @TestScore(points = 4, weight = 0.4, description = "Tratamento global de exceção implementado", 
                category = "🌟 Diferenciais", mandatory = false)
-    @DisplayName("Diferencial - Tratamento global de exceção")
+    @DisplayName("Diferencial - Tratamento global de Exceptions (Ignorado, não vimos esse conteúdo)")
     public void testGlobalExceptionHandling() {
-        // Test that exceptions are handled consistently
-        
-        // 404 for non-existent resource
-        given()
-        .when()
-            .get("/courses/999999")
-        .then()
-            .statusCode(404)
-            .contentType("application/json");
-        
-        // 400 for validation errors
-        given()
-            .contentType("application/json")
-            .body("{\"name\": \"\"}")
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(400)
-            .contentType("application/json");
-        
-        // 415 for unsupported media type
-        given()
-            .contentType("text/plain")
-            .body("invalid")
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(415);
+        Assertions.assertTrue(true);
     }
 
     @Test
@@ -121,33 +99,19 @@ public class OptionalFeaturesTests extends BaseTest {
         // If the API properly separates request/response from entities,
         // it's using DTOs. We can verify this by checking that the API
         // returns clean, well-structured JSON
-        
-        String courseJson = """
-            {
-                "name": "DTO Test Course"
-            }
-            """;
-        
-        Integer courseId = given()
-            .contentType("application/json")
-            .body(courseJson)
-        .when()
-            .post("/courses")
-        .then()
-            .statusCode(201)
-            .body("id", notNullValue())
-            .body("name", equalTo("DTO Test Course"))
-            .body("lessons", notNullValue())
-            .extract().path("id");
+
+        String courseName = Faker.courseName();
+        CourseRequest courseRequest = Rest.createCourseWithName(courseName);
+        Course course = Rest.courseByName(courseRequest.name());
         
         // Verify GET returns proper structure
         given()
         .when()
-            .get("/courses/" + courseId)
+            .get("/courses/" + course.id())
         .then()
             .statusCode(200)
-            .body("id", equalTo(courseId))
-            .body("name", equalTo("DTO Test Course"))
+            .body("id", equalTo(course.id().intValue()))
+            .body("name", equalTo(courseName))
             .body("lessons", instanceOf(java.util.List.class));
     }
 

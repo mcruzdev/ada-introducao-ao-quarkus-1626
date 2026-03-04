@@ -1,4 +1,6 @@
 package tech.ada.dto;
 
-public record CourseResponse(Long id, String name) {
+import java.util.List;
+
+public record CourseResponse(Long id, String name, List<LessonResponse> lessons) {
 }

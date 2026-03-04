@@ -10,6 +10,7 @@ public class Lesson extends PanacheEntity {
 
     private String name;
 
+    // required for JPA
     protected Lesson() {
     }
 
