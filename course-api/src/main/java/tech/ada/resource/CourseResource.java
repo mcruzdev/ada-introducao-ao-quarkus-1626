@@ -13,13 +13,14 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.net.URI;
+import java.util.List;
 import tech.ada.dto.CourseResponse;
 import tech.ada.dto.CreateCourseRequest;
 import tech.ada.dto.CreateLessonRequest;
+import tech.ada.dto.LessonResponse;
 import tech.ada.model.Course;
 import tech.ada.model.Lesson;
-
-import java.net.URI;
 
 @Path("/courses")
 public class CourseResource {
@@ -69,7 +70,8 @@ public class CourseResource {
 
     @GET
     public Response getCourses() {
-        return Response.ok(Course.listAll()).build();
+        List<Course> courses = Course.listAll();
+        return Response.ok(courses.stream().map((Course c) -> new CourseResponse(c.id, c.getName())).toList()).build();
     }
 
     @GET
@@ -80,8 +82,7 @@ public class CourseResource {
         if (course == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        return Response.ok(course).build();
+        return Response.ok(new CourseResponse(course.id, course.getName())).build();
     }
 
     @POST
@@ -101,7 +102,8 @@ public class CourseResource {
         course.addLesson(lesson);
 
         return Response.created(URI.create("/courses/" + course.id + "/lessons/" + lesson.id))
-                .header("Content-Type", MediaType.APPLICATION_JSON).build();
+                .header("Content-Type", MediaType.APPLICATION_JSON)
+                .entity(new LessonResponse(lesson.id, lesson.getName())).build();
     }
 
     @GET
@@ -114,6 +116,7 @@ public class CourseResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(course.getLessons()).build();
+        return Response.ok(course.getLessons().stream().map(l -> new LessonResponse(l.id, l.getName())).toList())
+                .build();
     }
 }
